@@ -1,0 +1,28 @@
+# Generated output
+out/*
+!out/.gitkeep
+
+# Runtime state
+.workbuddy/tmp/
+*.tmp
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local tool metadata and unfinished deploy staging (not part of the source repo)
+.workbuddy/
+deploy/
+
+# Language and editor artifacts
+__pycache__/
+node_modules/
+.next/
+dist/
+build/
+.vscode/
+.idea/
