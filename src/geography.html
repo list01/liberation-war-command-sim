@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>《解放战争》真实地理对照 · 腾讯地图</title>
+<style>
+:root{--bg:#0c1210;--panel:#131c18;--line:#2a3a33;--tx:#dbe6df;--mut:#8ba79a;--gold:#e4b969;--blue:#6fa8c8}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--tx);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;font-size:13px;line-height:1.6}
+.wrap{max-width:1400px;margin:0 auto;padding:14px}
+h1{font-size:19px;color:var(--gold);letter-spacing:2px;margin:0 0 2px}
+h1 small{display:block;font-size:10px;color:var(--mut);letter-spacing:1px;font-weight:400;margin-top:3px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+button{font-family:inherit;font-size:12px;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px 11px;cursor:pointer}
+button:hover,button.on{border-color:var(--gold);color:var(--gold)}
+.cols{display:grid;grid-template-columns:330px minmax(0,1fr);gap:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:11px}
+#map{width:100%;height:640px;border:1px solid var(--line);border-radius:6px;background:#111a16;display:flex;align-items:center;justify-content:center;color:var(--mut)}
+h3{font-size:12px;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:6px;margin:0 0 8px;font-weight:600}
+.place{font-size:11px;padding:5px 3px;border-bottom:1px dotted #223129;color:#9fb8aa;line-height:1.5;max-height:560px;overflow:auto}
+.place b{color:var(--gold);font-weight:500}
+.place em{font-style:normal;color:var(--dim);font-size:10px}
+.note{font-size:10.5px;color:var(--mut);background:#16211b;border-radius:5px;padding:9px 11px;margin-top:10px;line-height:1.7}
+@media(max-width:900px){.cols{grid-template-columns:1fr}#map{height:420px}}
+</style>
+<script type="text/javascript">
+window._TMapSecurityConfig = {
+  serviceHost: 'http://127.0.0.1:__WB_HTTP_PORT__/_TMapService/_wbt/__WB_TMAP_SECRET__',
+};
+</script>
+<script src="https://map.qq.com/api/gljs?v=1.exp"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>《解放战争》真实地理对照<small>底图：腾讯地图（合规白名单）· 坐标系 GCJ-02 · 用于核对历史地名、水系与交通线</small></h1>
+  <div class="bar" id="bar"></div>
+  <div class="cols">
+    <div class="panel">
+      <h3 id="title">战区地名</h3>
+      <div class="place" id="places"></div>
+    </div>
+    <div class="panel">
+      <h3>真实地图 · 点击标记查看地名</h3>
+      <div id="map">正在加载腾讯地图…</div>
+      <div class="note" id="geonote"></div>
+    </div>
+  </div>
+  <div class="note">
+    <b>使用与合规说明：</b>本页使用腾讯地图 GL JS 默认代理模式，前端不携带任何地图密钥；底图版权与审图号由腾讯地图提供。
+    标注对象仅为公开史料中的历史地名与交通线，不标注军事禁区、涉密单位或未公开敏感坐标。
+    现代底图的行政区划、道路与 1948 年历史地理存在差别（如"宿县"今为宿州，"锦西"今属葫芦岛市），
+    <b>历史方位与要素以游戏内"战区地理"面板及 docs/SOURCES.md 为准</b>；本页只作地理核对，不作为测绘图或行政区划依据。
+    离线双击打开本页时若无法联网加载底图，地名表仍可查阅。
+  </div>
+</div>
+<script>
+'use strict';
+/* 精简核对数据集：完整地名、史实注记与坐标见 src/index.html 的 GEO，以及 docs/SOURCES.md */
+var AREAS = [
+  { id:'menglianggu', name:'沂蒙 · 孟良崮（1947.5）', zoom:10, center:[35.70,118.15],
+    note:'属蒙山山系，沂蒙山区"七十二崮"之一；孟良崮主峰约 536 米，是汶河与蒙河分水岭。1947 年 5 月敌整编第 74 师自垛庄、桃墟北攻坦埠。本战区当时无铁路干线。',
+    places:[
+      ['蒙阴',35.720128,117.953367,'县城','华野主力隐蔽待机方向'],
+      ['坦埠',35.801521,118.223308,'华野总部','孟良崮战役前线指挥部所在地'],
+      ['垛庄',35.544694,118.163768,'要点','整 74 师进攻出发地与退路枢纽'],
+      ['孟良崮',35.582607,118.204937,'主峰','战役主战场，属蒙山山系'],
+      ['沂水',35.790919,118.628142,'县城','敌第 7 军、整 48 师北攻方向'],
+      ['桃墟',35.570000,118.130000,'要点','1947-05-11 整 74 师自垛庄、桃墟进攻坦埠'],
+      ['界牌',35.615000,118.270000,'要点','华野第 1 纵队切断 74 师与 25 师联系'],
+      ['新泰',35.910000,117.760000,'县城','敌军推进至莱芜、新泰、蒙阴一线']
+    ],
+    rivers:[
+      {n:'汶河',pts:[[35.70,117.76],[35.685,118.02],[35.675,118.30],[35.66,118.62]]},
+      {n:'沂河',pts:[[35.90,118.62],[35.75,118.60],[35.58,118.66],[35.44,118.70]]}
+    ],
+    rails:[],
+    roads:[{n:'沂水—蒙阴公路',pts:[[35.79,118.62],[35.76,118.38],[35.80,118.22],[35.72,117.95]]}]
+  },
+  { id:'tashan', name:'辽西 · 塔山 / 锦州（1948.10）', zoom:10, center:[40.93,120.98],
+    note:'塔山东临锦州湾、西接白台山，山海之间最窄处约 12 公里；北宁铁路自村东穿过，山海关至沈阳公路与铁路并行。塔山距锦州 30 公里、距锦西 4 公里、离葫芦岛 5 公里。1948-10-10 至 10-15 阻击 6 昼夜。',
+    places:[
+      ['锦州',41.096114,121.126859,'战略目标','北宁线咽喉，1948-10-15 攻克'],
+      ['塔山村',40.854229,120.948107,'核心阵地','四纵 12 师 34 团守备，铁路桥头为重点'],
+      ['高桥',40.889038,120.987165,'要点','电令指定"塔山、高桥及其以西以北"部署'],
+      ['打渔山',40.841154,120.999775,'潮汐岛 / 滩涂','涨潮成岛、退潮连岸，东翼前沿'],
+      ['白台山',40.866000,120.915000,'制高点','海拔约 200 米，唯一防御制高点'],
+      ['虹螺山',40.932190,120.720176,'山地','防线西端依托'],
+      ['葫芦岛',40.710974,120.836783,'港口','敌"东进兵团"海运增援登陆点'],
+      ['兴城',40.609990,120.756661,'县城','9-29 攻克，切断北宁铁路']
+    ],
+    rivers:[{n:'女儿河',pts:[[41.14,120.78],[41.11,120.95],[41.09,121.08],[41.07,121.16]]}],
+    rails:[{n:'北宁铁路（沈山线）',pts:[[41.13,121.18],[41.096114,121.126859],[41.02,121.05],[40.889038,120.987165],[40.854229,120.948107],[40.78,120.85]]}],
+    roads:[{n:'山海关—沈阳公路',pts:[[41.14,121.18],[41.08,121.10],[40.95,121.02],[40.89,120.99],[40.85,120.95],[40.80,120.90]]}]
+  },
+  { id:'xubeng', name:'徐蚌 · 徐州 / 宿县 / 双堆集（1948.11）', zoom:8, center:[33.75,117.10],
+    note:'徐州"五省通衢"，津浦铁路与陇海铁路十字交会，京杭大运河徐州段纵贯。宿县北距徐州约 75 公里、南距蚌埠约 90 公里，是徐蚌铁路中点与补给基地；1948-11-16 攻克宿县即切断徐州与蚌埠的联系。',
+    places:[
+      ['徐州',34.204224,117.283752,'枢纽','刘峙集团总部；津浦、陇海两线交会'],
+      ['碾庄圩',34.297407,117.778681,'主战场','黄百韬兵团被围歼处，1948-11-22'],
+      ['宿县（今宿州）',33.647726,116.964190,'战略要点','1948-11-16 攻克，切断徐蚌铁路'],
+      ['双堆集',33.423510,116.901503,'主战场','黄维兵团覆灭处，浍河与澥河之间'],
+      ['蚌埠',32.916820,117.388566,'要点','李延年、刘汝明兵团；津浦铁路南段'],
+      ['陈官庄',34.010837,116.583243,'主战场','杜聿明集团最后被歼处'],
+      ['台儿庄',34.560000,117.740000,'要点','何基沣、张克侠 11-08 在贾汪、台儿庄起义'],
+      ['符离集',33.780000,116.990000,'车站','宿县以北铁路桥梁；中野破路处']
+    ],
+    rivers:[
+      {n:'京杭大运河（中运河）',pts:[[34.40,117.30],[34.28,117.38],[34.10,117.62],[33.95,117.78],[33.75,117.92],[33.55,118.00]]},
+      {n:'浍河',pts:[[33.55,116.45],[33.52,116.70],[33.48,116.90],[33.43,117.10],[33.38,117.35]]},
+      {n:'涡河',pts:[[33.30,116.45],[33.28,116.72],[33.20,116.95],[33.10,117.20],[33.02,117.45]]},
+      {n:'淮河',pts:[[32.90,116.45],[32.88,116.80],[32.90,117.20],[32.88,117.60],[32.86,118.05]]}
+    ],
+    rails:[
+      {n:'津浦铁路（徐蚌段）',pts:[[34.204224,117.283752],[34.05,117.25],[33.90,117.10],[33.78,116.99],[33.647726,116.964190],[33.48,117.10],[33.30,117.33],[32.916820,117.388566]]},
+      {n:'陇海铁路（徐海段）',pts:[[34.20,116.45],[34.21,116.80],[34.204224,117.283752],[34.25,117.50],[34.297407,117.778681],[34.28,117.95],[34.23,118.05]]}
+    ],
+    roads:[{n:'徐海公路',pts:[[34.204224,117.283752],[34.24,117.50],[34.297407,117.778681],[34.25,118.05]]}]
+  }
+];
+var cur = 0, map = null, markerLayer = null, lineLayer = null;
+var DOT = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"><circle cx="7" cy="7" r="5" fill="#e4b969" stroke="#0d1712" stroke-width="1.5"/></svg>');
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderBar(){
+  document.getElementById('bar').innerHTML = AREAS.map(function(a,i){
+    return '<button class="'+(i===cur?'on':'')+'" onclick="pick('+i+')">'+esc(a.name)+'</button>';
+  }).join('') + '<span style="color:var(--mut);font-size:11px">切换战区以核对真实地名与交通线</span>';
+}
+function renderList(){
+  var a=AREAS[cur];
+  document.getElementById('title').textContent=a.name;
+  var h='';
+  a.places.forEach(function(p){
+    h+='<div class="place"><b>'+esc(p[0])+'</b> <em>'+esc(p[3])+' · '+p[1].toFixed(4)+'N '+p[2].toFixed(4)+'E</em><br>'+esc(p[4])+'</div>';
+  });
+  if(!a.rails.length) h+='<div class="place"><b>铁路</b> <em>本战区当时无铁路干线</em></div>';
+  a.rails.forEach(function(r){ h+='<div class="place"><b>'+esc(r.n)+'</b> <em>铁路（真实线路）</em></div>'; });
+  a.rivers.forEach(function(r){ h+='<div class="place"><b>'+esc(r.n)+'</b> <em>河流 / 水系</em></div>'; });
+  a.roads.forEach(function(r){ h+='<div class="place"><b>'+esc(r.n)+'</b> <em>公路</em></div>'; });
+  document.getElementById('places').innerHTML=h;
+  document.getElementById('geonote').textContent=a.note+'　本页坐标为 GCJ-02；游戏内格点图按真实经纬度投影并把上述水系、铁路、公路叠加为史实地理层。';
+}
+function toLatLng(p){ return new TMap.LatLng(p[0],p[1]); }
+function draw(){
+  if(typeof TMap==='undefined') return;
+  var a=AREAS[cur];
+  if(!map){
+    map=new TMap.Map('map',{zoom:a.zoom,center:new TMap.LatLng(a.center[0],a.center[1])});
+  }else{
+    map.setCenter(new TMap.LatLng(a.center[0],a.center[1]));
+    map.setZoom(a.zoom);
+  }
+  var geos=a.places.map(function(p,i){
+    return {id:'p'+i, styleId:'dot', position:new TMap.LatLng(p[1],p[2]), title:p[0]};
+  });
+  if(markerLayer) markerLayer.setMap(null);
+  markerLayer=new TMap.MultiMarker({
+    map:map,
+    styles:{dot:new TMap.MarkerStyle({width:14,height:14,anchor:{x:7,y:7},src:DOT})},
+    geometries:geos
+  });
+  markerLayer.on('click',function(evt){
+    var p=a.places[parseInt(String(evt.geometry.id).slice(1),10)];
+    if(p) document.getElementById('geonote').textContent='【'+p[0]+'】'+p[4]+'（'+p[1].toFixed(4)+'N '+p[2].toFixed(4)+'E）。'+a.note;
+  });
+  var lines=[];
+  a.rivers.forEach(function(r,i){ lines.push({id:'v'+i,styleId:'river',paths:r.pts.map(toLatLng)}); });
+  a.rails.forEach(function(r,i){ lines.push({id:'r'+i,styleId:'rail',paths:r.pts.map(toLatLng)}); });
+  a.roads.forEach(function(r,i){ lines.push({id:'d'+i,styleId:'road',paths:r.pts.map(toLatLng)}); });
+  if(lineLayer) lineLayer.setMap(null);
+  lineLayer=new TMap.MultiPolyline({
+    map:map,
+    styles:{
+      river:new TMap.PolylineStyle({color:'#378ADD',width:4,borderWidth:0,lineCap:'round'}),
+      rail:new TMap.PolylineStyle({color:'#E4B969',width:4,borderWidth:0,lineCap:'round'}),
+      road:new TMap.PolylineStyle({color:'#9AA08A',width:2,borderWidth:0,lineCap:'round'})
+    },
+    geometries:lines
+  });
+}
+function pick(i){ cur=i; renderBar(); renderList(); draw(); }
+function fallback(){
+  document.getElementById('map').innerHTML='<div style="text-align:center;padding:20px;line-height:1.9">'+
+    '<b style="color:var(--gold)">未能加载腾讯地图底图</b><br>可能处于离线环境或未在 WorkBuddy 运行时打开。<br>'+
+    '左侧真实地名表与坐标仍可查阅；游戏本体（src/index.html）无需联网即可运行。</div>';
+}
+window.addEventListener('load',function(){
+  renderBar(); renderList();
+  if(typeof TMap==='undefined'){ fallback(); return; }
+  try{ draw(); }catch(e){ fallback(); }
+});
+</script>
+</body>
+</html>
